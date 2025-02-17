@@ -46,7 +46,7 @@ export default function NewPasswordForm() {
     });
   };
   return (
-    <AuthWrapper heading="Новый пароль">
+    <AuthWrapper backButtonHref="/auth/login" backButtonLabel="Вернуться к странице входа" heading="Новый пароль">
       <Form {...form}>
         <form className={"space-y-4"} onSubmit={form.handleSubmit(onSubmit)}>
           <div className={""}>
@@ -60,7 +60,7 @@ export default function NewPasswordForm() {
                       disabled={isPending}
                       {...field}
                       placeholder="Новый пароль"
-                      type="newPassword"
+                      type="password"
                     />
                   </FormControl>
                   <FormMessage />
@@ -91,7 +91,7 @@ export default function NewPasswordForm() {
           <FormSuccess message={success} />
           <FormError message={error} />
           <Button disabled={isPending} className="w-full">
-            Отправить ссылку на почту
+            Обновить пароль
           </Button>
         </form>
       </Form>

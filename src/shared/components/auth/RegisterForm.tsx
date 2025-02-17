@@ -17,20 +17,23 @@ import { FormSuccess } from "./FormSuccess";
 import { Button } from "../ui/button";
 import { register } from "../../../../actions/register";
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 export default function RegisterForm() {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-
+  const searchParams = useSearchParams();
+  const defaultEmail = searchParams.get("email");
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
-      email: "",
+      email: defaultEmail != undefined ? defaultEmail : "",
       password: "",
       name: "",
     },
   });
 
   const [isPending, startTransistion] = useTransition();
+  const email = form.getValues("email");
 
   const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
     setError("");
@@ -48,7 +51,7 @@ export default function RegisterForm() {
       description="Создайте свой аккаунт"
       isShowSocial={true}
       backButtonLabel="Есть аккаунт? Войти"
-      backButtonHref="/auth/login"
+      backButtonHref={`/auth/login${email !== "" ? `?email=${email}` : ""}`}
     >
       <Form {...form}>
         <form className={"space-y-4"} onSubmit={form.handleSubmit(onSubmit)}>

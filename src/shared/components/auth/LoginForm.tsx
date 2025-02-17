@@ -19,9 +19,10 @@ import { Button } from "../ui/button";
 import { login } from "../../../../actions/login";
 import { useState, useTransition } from "react";
 import Link from "next/link";
-
 export default function LoginForm() {
   const searchParams = useSearchParams();
+  const defaultEmail = searchParams.get("email");
+
   const urlError =
     searchParams.get("error") === "QAuthAccountNotLinked"
       ? "Email already id used with different provider"
@@ -29,17 +30,19 @@ export default function LoginForm() {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [showTwoFactor, setShowTwoFactor] = useState(false);
+
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: "",
+      email: defaultEmail != undefined ? defaultEmail : "",
       password: "",
       code: "",
     },
   });
+  // const { getFieldState } = form;
 
   const [isPending, startTransition] = useTransition();
-
+  // const email = form.getFieldState("email");
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
     console.log(values);
     setError("");
@@ -67,14 +70,14 @@ export default function LoginForm() {
         });
     });
   };
-
+  const email = form.getValues("email");
   return (
     <AuthWrapper
       heading="Вход"
       description="Войдите в свой аккаунт с помощью почты и пароля"
-      isShowSocial={true}
+      isShowSocial={!showTwoFactor}
       backButtonLabel="Нет аккаунта? Зарегистрироваться"
-      backButtonHref="/auth/register"
+      backButtonHref={`/auth/register${email !== "" ? `?email=${email}` : ""}`}
     >
       <Form {...form}>
         <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -142,7 +145,7 @@ export default function LoginForm() {
               <div>
                 <Link
                   className="text-muted-foreground text-[14px] hover:underline"
-                  href="/auth/reset"
+                  href={`/auth/reset${email !== "" ? `?email=${email}` : ""}`}
                 >
                   Забыли пароль?
                 </Link>

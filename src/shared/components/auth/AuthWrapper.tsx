@@ -15,7 +15,6 @@ type AuthWrapperProps = {
   backButtonLabel?: string;
   backButtonHref?: string;
   isShowSocial?: boolean;
-
 };
 import ContinueWith from "./ContinueWith";
 
@@ -26,10 +25,9 @@ export default function AuthWrapper({
   backButtonHref,
   children,
   isShowSocial = false,
-
 }: PropsWithChildren<AuthWrapperProps>) {
   return (
-    <Card className="w-[400px]">
+    <Card className="w-[400px] max-[470px]:w-full  ">
       <CardHeader className="space-y-2">
         <CardTitle className="text-center ">{heading}</CardTitle>
         {description && (
@@ -41,7 +39,6 @@ export default function AuthWrapper({
       <CardContent className="space-y-2">
         {isShowSocial && <ContinueWith />}
         {children}
-
       </CardContent>
       <CardFooter className="flex">
         {backButtonHref && backButtonHref && (

@@ -52,6 +52,7 @@ model User {
   role                  UserRole               @default(USER)
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  Folder                Folder[]
 }
 
 model TwoFactorToken {
@@ -87,4 +88,60 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+enum Color {
+  RED
+  GREEN
+  BLUE
+  YELLOW
+  PURPLE
+  ORANGE
+  PINK
+  WHITE
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  title     String
+  createdAt DateTime  @default(now())
+  color     Color     @default(WHITE)
+  folderId  String
+  folder    Folder?    @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  emojiId   String
+  Subtask   Subtask[]
+  isDeleted Boolean   @default(false)
+}
+
+model Folder {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  createdAt   DateTime @default(now())
+  completedAt DateTime @default(now())
+  tasks       Task[]
+  emojiId     String
+  isDeleted   Boolean  @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Priority {
+  DEFAULT
+  NORMAL
+  AVERAGE
+  HIGN
+}
+
+model Subtask {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  completed Boolean  @default(false)
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  priority  Priority @default(DEFAULT)
+  isDone    Boolean  @default(false)
 }

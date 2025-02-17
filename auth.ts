@@ -19,8 +19,8 @@ declare module "next-auth" {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
-    signIn: "auth/login",
-    error: "auth/error",
+    signIn: "/auth/login",
+    error: "/auth/error",
   },
   events: {
     async linkAccount({ user }) {
@@ -44,11 +44,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         console.log({twoFactorConfirmation})
 
-        if (!twoFactorConfirmation) return false;
+        // if (!twoFactorConfirmation) return false;
 
-        await db.twoFactorConfirmation.delete({
-          where: { id: twoFactorConfirmation.id },
-        });
+        // await db.twoFactorConfirmation.delete({
+        //   where: { id: twoFactorConfirmation.id },
+        // });
       }
 
       return true;

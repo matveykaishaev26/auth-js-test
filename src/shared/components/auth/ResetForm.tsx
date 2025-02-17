@@ -17,24 +17,26 @@ import { reset } from "../../../../actions/reset";
 import { useState, useTransition } from "react";
 import AuthWrapper from "./AuthWrapper";
 import { ResetSchema } from "../../../../schemas";
+import { useSearchParams } from "next/navigation";
 export default function ResetForm() {
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
-
-  const form = useForm<z.infer<typeof ResetSchema >>({
-    resolver: zodResolver(ResetSchema ),
+  const searchParams = useSearchParams();
+  const defaultEmail = searchParams.get("email");
+  const form = useForm<z.infer<typeof ResetSchema>>({
+    resolver: zodResolver(ResetSchema),
     defaultValues: {
-      email: "",
+      email: defaultEmail != undefined ? defaultEmail : "",
     },
   });
 
   const [isPending, startTransistion] = useTransition();
-
-  const onSubmit = (values: z.infer<typeof ResetSchema >) => {
+  const email = form.getValues("email");
+  const onSubmit = (values: z.infer<typeof ResetSchema>) => {
     setError("");
-      setSuccess("");
-      
-      console.log(values)
+    setSuccess("");
+
+    console.log(values);
     startTransistion(() => {
       reset(values).then((data) => {
         setError(data?.error);
@@ -44,7 +46,7 @@ export default function ResetForm() {
   };
   return (
     <AuthWrapper
-      backButtonHref="/auth/login"
+      backButtonHref={`/auth/login${email !== "" ? `?email=${email}` : ""}`}
       backButtonLabel="Назад к логину"
       heading="Восстановление пароля"
     >
@@ -73,7 +75,7 @@ export default function ResetForm() {
           <FormSuccess message={success} />
           <FormError message={error} />
           <Button disabled={isPending} className="w-full">
-            Отправить ссылку на почту
+            Сбросить пароль
           </Button>
         </form>
       </Form>
